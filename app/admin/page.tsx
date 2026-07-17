@@ -23,6 +23,8 @@ function toCsv(entries: FeedbackEntry[]) {
 export default function AdminDashboard() {
   const [entries, setEntries] = useState<FeedbackEntry[]>([]);
   const [filter, setFilter] = useState("all");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -48,23 +50,35 @@ export default function AdminDashboard() {
     loadFeedback();
   }, []);
 
-  const filtered = useMemo(() => {
-    if (filter === "all") return entries;
-    return entries.filter((entry) => entry.rating === Number(filter));
-  }, [entries, filter]);
+  const dateFiltered = useMemo(() => {
+    const from = dateFrom ? new Date(`${dateFrom}T00:00:00`) : null;
+    const to = dateTo ? new Date(`${dateTo}T23:59:59.999`) : null;
 
-  const average = entries.length
-    ? (entries.reduce((total, entry) => total + entry.rating, 0) / entries.length).toFixed(1)
+    return entries.filter((entry) => {
+      const createdAt = new Date(entry.createdAt);
+      return (!from || createdAt >= from) && (!to || createdAt <= to);
+    });
+  }, [dateFrom, dateTo, entries]);
+
+  const filtered = useMemo(() => {
+    if (filter === "all") return dateFiltered;
+    return dateFiltered.filter((entry) => entry.rating === Number(filter));
+  }, [dateFiltered, filter]);
+
+  const average = dateFiltered.length
+    ? (
+        dateFiltered.reduce((total, entry) => total + entry.rating, 0) / dateFiltered.length
+      ).toFixed(1)
     : "0.0";
 
-  const excellent = entries.filter((entry) => entry.rating === 5).length;
-  const needsAttention = entries.filter((entry) => entry.rating <= 2).length;
+  const excellent = dateFiltered.filter((entry) => entry.rating === 5).length;
+  const needsAttention = dateFiltered.filter((entry) => entry.rating <= 2).length;
   const distribution = ratings.map((rating) => {
-    const count = entries.filter((entry) => entry.rating === rating.value).length;
+    const count = dateFiltered.filter((entry) => entry.rating === rating.value).length;
     return {
       ...rating,
       count,
-      percentage: entries.length ? Math.round((count / entries.length) * 100) : 0
+      percentage: dateFiltered.length ? Math.round((count / dateFiltered.length) * 100) : 0
     };
   });
 
@@ -103,7 +117,7 @@ export default function AdminDashboard() {
       <section className="summary-grid" aria-label="Feedback summary">
         <article className="summary-card">
           <span>Total Responses</span>
-          <strong>{entries.length}</strong>
+          <strong>{dateFiltered.length}</strong>
         </article>
         <article className="summary-card">
           <span>Average Rating</span>
@@ -125,7 +139,7 @@ export default function AdminDashboard() {
             <p className="eyebrow">Rating overview</p>
             <h2 id="distribution-heading">Response distribution</h2>
           </div>
-          <span>{entries.length} total responses</span>
+          <span>{dateFiltered.length} responses in selected period</span>
         </div>
 
         <div className="distribution-chart">
@@ -156,19 +170,58 @@ export default function AdminDashboard() {
       </section>
 
       <div className="toolbar">
-        <label className="filter-control">
-          <span>Show</span>
-          <select value={filter} onChange={(event) => setFilter(event.target.value)}>
-            <option value="all">All ratings</option>
-            <option value="5">Excellent only</option>
-            <option value="4">Good only</option>
-            <option value="3">Okay only</option>
-            <option value="2">Poor only</option>
-            <option value="1">Very poor only</option>
-          </select>
-        </label>
+        <div className="filter-group">
+          <label className="filter-control">
+            <span>Show</span>
+            <select value={filter} onChange={(event) => setFilter(event.target.value)}>
+              <option value="all">All ratings</option>
+              <option value="5">Excellent only</option>
+              <option value="4">Good only</option>
+              <option value="3">Okay only</option>
+              <option value="2">Poor only</option>
+              <option value="1">Very poor only</option>
+            </select>
+          </label>
 
-        <button className="primary-button" onClick={exportCsv} type="button">
+          <label className="filter-control">
+            <span>From</span>
+            <input
+              max={dateTo || undefined}
+              onChange={(event) => setDateFrom(event.target.value)}
+              type="date"
+              value={dateFrom}
+            />
+          </label>
+
+          <label className="filter-control">
+            <span>To</span>
+            <input
+              min={dateFrom || undefined}
+              onChange={(event) => setDateTo(event.target.value)}
+              type="date"
+              value={dateTo}
+            />
+          </label>
+
+          <button
+            className="clear-filter"
+            disabled={!dateFrom && !dateTo}
+            onClick={() => {
+              setDateFrom("");
+              setDateTo("");
+            }}
+            type="button"
+          >
+            Clear dates
+          </button>
+        </div>
+
+        <button
+          className="primary-button"
+          disabled={!filtered.length}
+          onClick={exportCsv}
+          type="button"
+        >
           Export CSV
         </button>
       </div>
@@ -200,7 +253,7 @@ export default function AdminDashboard() {
             </tbody>
           </table>
         ) : (
-          <div className="empty">No feedback yet.</div>
+          <div className="empty">No feedback matches the selected filters.</div>
         )}
       </section>
     </main>

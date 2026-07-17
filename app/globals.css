@@ -426,6 +426,13 @@ button {
   gap: 10px;
 }
 
+.filter-group {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 .filter-control > span {
   color: var(--muted);
   font-size: 13px;
@@ -433,12 +440,28 @@ button {
   text-transform: uppercase;
 }
 
-.toolbar select {
+.toolbar select,
+.toolbar input[type="date"] {
   background: #fff;
   border: 1px solid var(--line);
   border-radius: 8px;
+  color: var(--ink);
   min-height: 44px;
   padding: 0 12px;
+}
+
+.clear-filter {
+  background: transparent;
+  border: 0;
+  color: var(--blue);
+  font-weight: 800;
+  min-height: 44px;
+  padding: 0 8px;
+}
+
+.clear-filter:disabled {
+  color: #98a2b3;
+  cursor: not-allowed;
 }
 
 .summary-grid {
@@ -631,6 +654,12 @@ th {
   .admin-actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
+  }
+
+  .filter-group,
+  .filter-control {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .chart-header {
