@@ -5,6 +5,21 @@ import Image from "next/image";
 import Link from "next/link";
 import { FeedbackEntry, ratings } from "@/lib/feedback";
 
+const PAGE_SIZE = 10;
+
+function pageRange(currentPage: number, totalPages: number) {
+  const pages = Array.from(
+    new Set([1, currentPage - 1, currentPage, currentPage + 1, totalPages])
+  )
+    .filter((page) => page >= 1 && page <= totalPages)
+    .sort((a, b) => a - b);
+
+  return pages.flatMap((page, index) => {
+    const previous = pages[index - 1];
+    return previous && page - previous > 1 ? ["ellipsis", page] : [page];
+  });
+}
+
 function toCsv(entries: FeedbackEntry[]) {
   const headers = ["Date", "Rating", "Label"];
   const rows = entries.map((entry) => [
@@ -25,6 +40,7 @@ export default function AdminDashboard() {
   const [filter, setFilter] = useState("all");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -81,6 +97,10 @@ export default function AdminDashboard() {
       percentage: dateFiltered.length ? Math.round((count / dateFiltered.length) * 100) : 0
     };
   });
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const pageStart = (currentPage - 1) * PAGE_SIZE;
+  const paginatedEntries = filtered.slice(pageStart, pageStart + PAGE_SIZE);
+  const paginationPages = pageRange(currentPage, totalPages);
 
   function exportCsv() {
     const blob = new Blob([toCsv(filtered)], { type: "text/csv;charset=utf-8" });
@@ -173,7 +193,13 @@ export default function AdminDashboard() {
         <div className="filter-group">
           <label className="filter-control">
             <span>Show</span>
-            <select value={filter} onChange={(event) => setFilter(event.target.value)}>
+            <select
+              value={filter}
+              onChange={(event) => {
+                setFilter(event.target.value);
+                setCurrentPage(1);
+              }}
+            >
               <option value="all">All ratings</option>
               <option value="5">Excellent only</option>
               <option value="4">Good only</option>
@@ -187,7 +213,10 @@ export default function AdminDashboard() {
             <span>From</span>
             <input
               max={dateTo || undefined}
-              onChange={(event) => setDateFrom(event.target.value)}
+              onChange={(event) => {
+                setDateFrom(event.target.value);
+                setCurrentPage(1);
+              }}
               type="date"
               value={dateFrom}
             />
@@ -197,7 +226,10 @@ export default function AdminDashboard() {
             <span>To</span>
             <input
               min={dateFrom || undefined}
-              onChange={(event) => setDateTo(event.target.value)}
+              onChange={(event) => {
+                setDateTo(event.target.value);
+                setCurrentPage(1);
+              }}
               type="date"
               value={dateTo}
             />
@@ -209,6 +241,7 @@ export default function AdminDashboard() {
             onClick={() => {
               setDateFrom("");
               setDateTo("");
+              setCurrentPage(1);
             }}
             type="button"
           >
@@ -240,7 +273,7 @@ export default function AdminDashboard() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((entry) => (
+              {paginatedEntries.map((entry) => (
                 <tr key={entry.id}>
                   <td>{new Date(entry.createdAt).toLocaleString()}</td>
                   <td>
@@ -256,6 +289,48 @@ export default function AdminDashboard() {
           <div className="empty">No feedback matches the selected filters.</div>
         )}
       </section>
+
+      {!loading && !error && filtered.length ? (
+        <nav className="pagination" aria-label="Feedback table pagination">
+          <p>
+            Showing {pageStart + 1}–{Math.min(pageStart + PAGE_SIZE, filtered.length)} of{" "}
+            {filtered.length}
+          </p>
+
+          <div className="pagination-controls">
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((page) => page - 1)}
+              type="button"
+            >
+              Previous
+            </button>
+
+            {paginationPages.map((page, index) =>
+              typeof page === "string" ? (
+                <span aria-hidden="true" key={`ellipsis-${index}`}>…</span>
+              ) : (
+                <button
+                  aria-current={currentPage === page ? "page" : undefined}
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  type="button"
+                >
+                  {page}
+                </button>
+              )
+            )}
+
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage((page) => page + 1)}
+              type="button"
+            >
+              Next
+            </button>
+          </div>
+        </nav>
+      ) : null}
     </main>
   );
 }

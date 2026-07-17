@@ -380,7 +380,8 @@ button {
 .toolbar,
 .summary-grid,
 .chart-card,
-.table-wrap {
+.table-wrap,
+.pagination {
   margin-inline: auto;
   max-width: 1240px;
 }
@@ -621,6 +622,52 @@ th {
   color: var(--red);
 }
 
+.pagination {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 18px 4px 0;
+}
+
+.pagination p {
+  color: var(--muted);
+  font-size: 14px;
+  margin: 0;
+}
+
+.pagination-controls {
+  align-items: center;
+  display: flex;
+  gap: 6px;
+}
+
+.pagination-controls button {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  color: var(--ink);
+  font-weight: 700;
+  min-height: 38px;
+  min-width: 38px;
+  padding: 0 12px;
+}
+
+.pagination-controls button[aria-current="page"] {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
+}
+
+.pagination-controls button:disabled {
+  color: #98a2b3;
+  cursor: not-allowed;
+}
+
+.pagination-controls span {
+  color: var(--muted);
+  padding: 0 3px;
+}
+
 .empty {
   color: var(--muted);
   padding: 34px;
@@ -671,6 +718,16 @@ th {
   .chart-row {
     gap: 8px;
     grid-template-columns: 96px minmax(70px, 1fr) 24px 38px;
+  }
+
+  .pagination {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .pagination-controls {
+    flex-wrap: wrap;
   }
 
   .chart-label img {
