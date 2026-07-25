@@ -193,6 +193,11 @@ button {
   width: clamp(52px, 7vw, 72px);
 }
 
+.hr-logo {
+  height: clamp(42px, 5.5vw, 58px);
+  width: clamp(42px, 5.5vw, 58px);
+}
+
 .office-label {
   color: var(--green-dark);
   font-size: clamp(12px, 1.5vw, 16px);
@@ -741,6 +746,11 @@ th {
     width: 50px;
   }
 
+  .hr-logo {
+    height: 39px;
+    width: 39px;
+  }
+
   .feedback-panel h1 {
     font-size: clamp(25px, 8vw, 34px);
   }
@@ -828,6 +838,11 @@ th {
   .brand-logo {
     height: 42px;
     width: 42px;
+  }
+
+  .hr-logo {
+    height: 34px;
+    width: 34px;
   }
 
   .feedback-panel h1 {

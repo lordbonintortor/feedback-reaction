@@ -102,7 +102,7 @@ export default function FeedbackKiosk() {
         <div className="kiosk-brand" aria-label="HRMDO and Ateneo de Davao University">
           <Image
             alt="HRMDO logo"
-            className="brand-logo"
+            className="brand-logo hr-logo"
             height={72}
             priority
             src="/hr-logo.jpeg"
