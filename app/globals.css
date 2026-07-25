@@ -194,8 +194,8 @@ button {
 }
 
 .hr-logo {
-  height: clamp(42px, 5.5vw, 58px);
-  width: clamp(42px, 5.5vw, 58px);
+  height: clamp(47px, 6.3vw, 65px);
+  width: clamp(47px, 6.3vw, 65px);
 }
 
 .office-label {
@@ -747,8 +747,8 @@ th {
   }
 
   .hr-logo {
-    height: 39px;
-    width: 39px;
+    height: 45px;
+    width: 45px;
   }
 
   .feedback-panel h1 {
@@ -841,8 +841,8 @@ th {
   }
 
   .hr-logo {
-    height: 34px;
-    width: 34px;
+    height: 38px;
+    width: 38px;
   }
 
   .feedback-panel h1 {
