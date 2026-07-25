@@ -130,7 +130,16 @@ button {
   padding: 32px;
 }
 
-.admin-shortcut {
+.kiosk-actions {
+  display: flex;
+  gap: 10px;
+  position: fixed;
+  right: 22px;
+  top: 22px;
+  z-index: 5;
+}
+
+.kiosk-action-button {
   align-items: center;
   backdrop-filter: blur(12px);
   background: rgba(255, 255, 255, 0.86);
@@ -144,16 +153,12 @@ button {
   gap: 7px;
   min-height: 42px;
   padding: 0 16px;
-  position: fixed;
-  right: 22px;
   text-decoration: none;
-  top: 22px;
   transition: box-shadow 180ms ease, transform 180ms ease;
-  z-index: 5;
 }
 
-.admin-shortcut:hover,
-.admin-shortcut:focus-visible {
+.kiosk-action-button:hover,
+.kiosk-action-button:focus-visible {
   box-shadow: 0 12px 28px rgba(23, 92, 211, 0.2);
   outline: 2px solid var(--blue);
   outline-offset: 2px;
@@ -166,25 +171,42 @@ button {
   border-radius: 8px;
   box-shadow: 0 28px 80px rgba(16, 24, 40, 0.16);
   max-width: 980px;
-  padding: clamp(28px, 5vw, 64px);
+  padding: clamp(24px, 4vw, 48px);
   text-align: center;
   width: min(100%, 980px);
 }
 
+.kiosk-brand {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.brand-logo {
+  background: #fff;
+  border: 1px solid rgba(29, 41, 57, 0.1);
+  border-radius: 50%;
+  height: clamp(52px, 7vw, 72px);
+  object-fit: contain;
+  width: clamp(52px, 7vw, 72px);
+}
+
 .office-label {
   color: var(--green-dark);
-  font-size: clamp(14px, 1.8vw, 18px);
+  font-size: clamp(12px, 1.5vw, 16px);
   font-weight: 700;
   letter-spacing: 0.08em;
-  margin: 0 0 14px;
+  margin: 0 0 10px;
   text-transform: uppercase;
 }
 
 .feedback-panel h1 {
-  font-size: clamp(34px, 5.4vw, 64px);
+  font-size: clamp(28px, 4.2vw, 48px);
   letter-spacing: 0;
   line-height: 1.04;
-  margin: 0 auto 14px;
+  margin: 0 auto 10px;
   max-width: 820px;
 }
 
@@ -198,7 +220,7 @@ button {
   display: grid;
   gap: clamp(12px, 2vw, 22px);
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  margin: 44px 0 28px;
+  margin: 30px 0 22px;
 }
 
 .rating-button {
@@ -319,9 +341,9 @@ button {
 
 .feedback-panel .selected-rating {
   color: var(--ink);
-  font-size: clamp(18px, 2vw, 24px);
+  font-size: clamp(16px, 1.8vw, 21px);
   font-weight: 700;
-  margin-top: 30px;
+  margin-top: 22px;
 }
 
 .primary-button,
@@ -675,19 +697,69 @@ th {
 }
 
 @media (max-width: 760px) {
-  .kiosk-shell,
+  .kiosk-shell {
+    padding: 72px 10px 14px;
+  }
+
   .admin-shell {
     padding: 18px;
   }
 
-  .admin-shortcut {
-    right: 14px;
-    top: 14px;
+  .kiosk-actions {
+    gap: 6px;
+    right: 10px;
+    top: 10px;
   }
 
-  .ratings,
+  .kiosk-action-button {
+    font-size: 12px;
+    min-height: 38px;
+    padding: 0 11px;
+  }
+
+  .ratings {
+    gap: 8px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: 20px 0 14px;
+  }
+
   .summary-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .feedback-panel {
+    padding: 18px 12px;
+  }
+
+  .kiosk-brand {
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .brand-logo {
+    height: 50px;
+    width: 50px;
+  }
+
+  .feedback-panel h1 {
+    font-size: clamp(25px, 8vw, 34px);
+  }
+
+  .rating-button {
+    padding: 6px;
+  }
+
+  .emoji {
+    max-width: 86px;
+  }
+
+  .rating-label {
+    font-size: 11px;
+    margin-top: 3px;
+  }
+
+  .feedback-panel .selected-rating {
+    margin-top: 16px;
   }
 
   .details,
@@ -737,5 +809,44 @@ th {
   .submit-row {
     align-items: center;
     flex-direction: column;
+  }
+}
+
+@media (max-height: 650px) and (orientation: landscape) {
+  .kiosk-shell {
+    padding: 58px 16px 12px;
+  }
+
+  .feedback-panel {
+    padding: 14px 22px;
+  }
+
+  .kiosk-brand {
+    margin-bottom: 5px;
+  }
+
+  .brand-logo {
+    height: 42px;
+    width: 42px;
+  }
+
+  .feedback-panel h1 {
+    font-size: 28px;
+  }
+
+  .ratings {
+    margin: 16px 0 10px;
+  }
+
+  .emoji {
+    max-width: 82px;
+  }
+
+  .feedback-panel .selected-rating {
+    margin-top: 10px;
+  }
+
+  .submit-row {
+    margin-top: 10px;
   }
 }

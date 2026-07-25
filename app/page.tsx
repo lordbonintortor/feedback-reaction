@@ -15,6 +15,7 @@ const initialForm: FormState = {
 export default function FeedbackKiosk() {
   const [form, setForm] = useState<FormState>(initialForm);
   const [status, setStatus] = useState<"idle" | "saving" | "thanks" | "error">("idle");
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const selected = useMemo(
     () => ratings.find((rating) => rating.value === form.rating),
@@ -31,6 +32,20 @@ export default function FeedbackKiosk() {
 
     return () => window.clearTimeout(timeout);
   }, [status]);
+
+  useEffect(() => {
+    const updateFullscreenState = () => setIsFullscreen(Boolean(document.fullscreenElement));
+    document.addEventListener("fullscreenchange", updateFullscreenState);
+    return () => document.removeEventListener("fullscreenchange", updateFullscreenState);
+  }, []);
+
+  async function toggleFullscreen() {
+    if (document.fullscreenElement) {
+      await document.exitFullscreen();
+    } else if (document.fullscreenEnabled) {
+      await document.documentElement.requestFullscreen();
+    }
+  }
 
   async function submitFeedback(event?: FormEvent) {
     event?.preventDefault();
@@ -68,14 +83,42 @@ export default function FeedbackKiosk() {
 
   return (
     <main className="kiosk-shell">
-      <a className="admin-shortcut" href="/admin" aria-label="Open admin portal">
-        <span aria-hidden="true">⚙</span>
-        Admin Portal
-      </a>
+      <div className="kiosk-actions">
+        <button
+          aria-pressed={isFullscreen}
+          className="kiosk-action-button"
+          onClick={toggleFullscreen}
+          type="button"
+        >
+          <span aria-hidden="true">{isFullscreen ? "↙" : "⛶"}</span>
+          {isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
+        </button>
+        <a className="kiosk-action-button" href="/admin" aria-label="Open admin portal">
+          <span aria-hidden="true">⚙</span>
+          Admin Portal
+        </a>
+      </div>
       <form className="feedback-panel" onSubmit={submitFeedback}>
+        <div className="kiosk-brand" aria-label="HRMDO and Ateneo de Davao University">
+          <Image
+            alt="HRMDO logo"
+            className="brand-logo"
+            height={72}
+            priority
+            src="/hr-logo.jpeg"
+            width={72}
+          />
+          <Image
+            alt="Ateneo de Davao University logo"
+            className="brand-logo"
+            height={72}
+            priority
+            src="/ateneo-logo.jpg"
+            width={72}
+          />
+        </div>
         <p className="office-label">Office Service Feedback</p>
         <h1>How would you rate your experience today?</h1>
-        <p>Tap an emoji to let us know.</p>
 
         <div className="ratings" role="radiogroup" aria-label="Service rating">
           {ratings.map((rating) => (
