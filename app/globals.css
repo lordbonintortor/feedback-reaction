@@ -100,6 +100,51 @@ button {
   text-align: left;
 }
 
+.password-input {
+  display: block;
+  position: relative;
+}
+
+.password-input input {
+  padding-right: 52px;
+}
+
+.password-toggle {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--muted);
+  display: flex;
+  height: 44px;
+  justify-content: center;
+  padding: 0;
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  width: 44px;
+}
+
+.password-toggle:hover,
+.password-toggle:focus-visible {
+  color: var(--blue);
+}
+
+.password-toggle:focus-visible {
+  border-radius: 6px;
+  outline: 2px solid var(--blue);
+  outline-offset: -2px;
+}
+
+.password-toggle svg {
+  fill: none;
+  height: 21px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+  width: 21px;
+}
+
 .login-card .primary-button {
   width: 100%;
 }
